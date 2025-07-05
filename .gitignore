@@ -1,0 +1,23 @@
+# Output files
+*.csv
+*.tsv
+*.log
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.swp
+
+# Virtual environment
+venv/
+
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment & config files
+.env
+*.env
