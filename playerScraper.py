@@ -14,7 +14,7 @@ teams = [
 
 # I will need to add in some conditions for DST since that's formatted differently
 positions = [
-    "qb", "rb", "wr", "te", "k" # "dst"
+    "qb", "rb", "wr", "te", "k", "dst"
 ]
 
 base_url = "https://fantasydata.com/nfl/fantasy-football-leaders"
@@ -35,8 +35,8 @@ headers = {
 all_rows = []
 
 for team in teams:
+    print(f"Scraping team: {team}")
     for position in positions:
-        print(f"Scraping team: {team}")
         params = params_template.copy()
         params["team"] = team
         params["position"] = [position]
@@ -52,21 +52,38 @@ for team in teams:
 
         for row in table.find_all("tr")[1:]:  # Skip header
             cells = row.find_all("td")
+
+            name_cell = row.find("td", class_="sticky special text-start")
+            player_link = name_cell.find("a") if name_cell else None
+            player_id = None
+
+            if player_link and "href" in player_link.attrs:
+                href = player_link["href"]
+                # Extract the numeric ID from the URL
+                # URL format: /nfl/kyler-murray-fantasy/20889
+                player_id = href
+
             data = [cell.get_text(strip=True) for cell in cells[:5]] # five total columns
 
-            # if DST... else this
             # consider case switch for 8, 10, whatever games played by position
-            if data and len(data) == 5:
+            if data and position == "dst":
+                data.append(player_id)
+                all_rows.append(data)
+            elif data and len(data) == 5:
                 try:
                     #check games played
                     if float(data[4]) >= 10: # GP is 5th column (index 4)
+                        data.append(player_id)
                         all_rows.append(data)
                 except ValueError:
                     pass #skips non-integer data in that column
 
-# Convert to DataFrame (optionally name columns)
-df = pd.DataFrame(all_rows)
+# Convert to DataFrame
+columns = ["Rank", "Name", "Team", "Pos", "GP", "PlayerID"]
+df = pd.DataFrame(all_rows, columns=columns)
 
 print(df.head())
 
-df.to_csv("all_team_stats.csv", index=False)
+year = params_template["sp"]  # for the file save
+
+df.to_csv(f"all_team_stats_{year}.csv", index=False)
