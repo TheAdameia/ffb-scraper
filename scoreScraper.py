@@ -6,14 +6,6 @@ import pandas as pd
 # scrapes score info for particular players
 # formats info to csv depending on the position
 
-
-# so this will need year, player name, position
-
-# https://fantasydata.com/nfl/baker-mayfield-fantasy/19790?scoring=fpts_ppr&sp=2020_REG
-
-#                                                     ^^ what the hell is this number? an ID?
-#                                                     More importantly, is it exposed elsewhere?
-
 base_url = "https://fantasydata.com/nfl/kyler-murray-fantasy/20889?scoring=fpts_yahoo&sp=2020_REG"
 # params_template = {
 # }
@@ -31,19 +23,22 @@ response.raise_for_status()
 
 soup = BeautifulSoup(response.text, "html.parser")
 tables = soup.find_all("table")
-target_table = tables[1]  # Zero-based index
+target_table = tables[2]  # Zero-based index
 
 if not target_table:
-    print(f"Warning: No second table found")
+    print(f"Warning: No third table found")
 
 for row in target_table.find_all("tr")[1:]:  # Skip header
         cells = row.find_all("td")
         data = [cell.get_text(strip=True) for cell in cells]
+        # add player ID to data
+        all_rows.append(data)
 
-all_rows.append(data)
+
 
 # for loop ends here
 
+# columns = ["Rank", "Name", "Team", "Pos", "GP", "PlayerID"]
 df = pd.DataFrame(all_rows)
 
 print(df.head())
