@@ -33,6 +33,7 @@ headers = {
 }
 
 all_rows = []
+dst_all_rows = []
 
 for team in teams:
     print(f"Scraping team: {team}")
@@ -67,8 +68,7 @@ for team in teams:
 
             # consider case switch for 8, 10, whatever games played by position
             if data and position == "dst":
-                data.append(player_id)
-                all_rows.append(data)
+                dst_all_rows.append(data)
             elif data and len(data) == 5:
                 try:
                     #check games played
@@ -82,10 +82,13 @@ for team in teams:
 
 # Convert to DataFrame
 columns = ["Rank", "Name", "Team", "Pos", "GP", "PlayerID"]
+dst_columns = ["Rank", "Team", "GP", "extra", "extra2"]
 df = pd.DataFrame(all_rows, columns=columns)
+dst_df = pd.DataFrame(dst_all_rows, columns=dst_columns)
 
 print(df.head())
 
 year = params_template["sp"]  # for the file save
 
 df.to_csv(f"all_team_stats_{year}.csv", index=False)
+dst_df.to_csv(f"all_DEF_{year}.csv", index=False)
