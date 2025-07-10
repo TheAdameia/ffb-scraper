@@ -41,6 +41,8 @@ for _, row in players.iterrows():
 
     base_url = f"https://fantasydata.com{player_id_path}?scoring=fpts_yahoo&sp={season_segment}"
 
+    print(f"scraping scores for player {player_id_path}")
+
     try:
         response = requests.get(base_url, headers=headers)
         response.raise_for_status()
@@ -58,7 +60,9 @@ for _, row in players.iterrows():
     for row in target_table.find_all("tr")[2:]:  # skip header and strangely empty first row
             cells = row.find_all("td")
             data = [cell.get_text(strip=True) for cell in cells]
-            # add player ID to data
+            if data:
+                data.append(player_id_path)
+                data.append(position)
             all_rows.append(data)
     
     time.sleep(1) # courtesy

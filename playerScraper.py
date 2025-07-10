@@ -73,6 +73,8 @@ for team in teams:
                 try:
                     #check games played
                     if float(data[4]) >= 10: # GP is 5th column (index 4)
+                        if position == "rb" and data[3] == "FB":
+                            continue # skips fullbacks
                         data.append(player_id)
                         all_rows.append(data)
                 except ValueError:
