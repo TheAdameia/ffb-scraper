@@ -1,9 +1,19 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import sys
 
 # source venv/Scripts/activate
+# python playerScraper.py <year>
 # deactivate
+
+
+if len(sys.argv) != 2:
+    print("Usage: python playerScraper.py <year>")
+    sys.exit(1)
+
+year = sys.argv[1]
+
 
 teams = [
     "ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE", "DAL", "DEN",
@@ -20,7 +30,7 @@ positions = [
 base_url = "https://fantasydata.com/nfl/fantasy-football-leaders"
 params_template = {
     "scope": "season",
-    "sp": "2020_REG",  # season/year
+    "sp": f"{year}_REG",  # season/year
     "position": "",    # placeholder for position
     "team": "",        # placeholder for team code
     "scoring": "fpts_yahoo",
@@ -88,7 +98,5 @@ dst_df = pd.DataFrame(dst_all_rows, columns=dst_columns)
 
 print(df.head())
 
-year = params_template["sp"]  # for the file save
-
-df.to_csv(f"all_team_stats_{year}.csv", index=False)
+df.to_csv(f"all_team_stats_{year}_REG.csv", index=False)
 dst_df.to_csv(f"all_DEF_{year}.csv", index=False)
