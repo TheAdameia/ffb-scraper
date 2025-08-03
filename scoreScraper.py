@@ -21,7 +21,8 @@ QB_index = {
     "YardsRushing": 14,
     "TouchdownsRushing": 16,
     "Week": 0,
-    "FantasyPoints": 4
+    "FantasyPoints": 4,
+    "Team": 2
 }
 
 WR_index = {
@@ -35,7 +36,8 @@ WR_index = {
     "Fumbles": 16,
     "FumblesLost": 17,
     "Week": 0,
-    "FantasyPoints": 4
+    "FantasyPoints": 4,
+    "Team": 2
 }
 
 RB_index = {
@@ -49,7 +51,8 @@ RB_index = {
     "Fumbles": 13,
     "FumblesLost": 14,
     "Week": 0,
-    "FantasyPoints": 4
+    "FantasyPoints": 4,
+    "Team": 2
 }
 
 TE_index ={
@@ -63,7 +66,8 @@ TE_index ={
     "Fumbles": 16,
     "FumblesLost": 17,
     "Week": 0,
-    "FantasyPoints": 4
+    "FantasyPoints": 4,
+    "Team": 2
 }
 
 K_index = {
@@ -72,7 +76,8 @@ K_index = {
     "ExtraPointAttempt": 10,
     "ExtraPointMade": 9,
     "Week": 0,
-    "FantasyPoints": 4
+    "FantasyPoints": 4,
+    "Team": 2
 }
 
 # and standard headers for the actual recording.
@@ -108,7 +113,8 @@ standard_headers = [
     "FantasyPoints",
     "Week",
     "PlayerID",
-    "Position"
+    "Position",
+    "Team"
 ]
 
 
