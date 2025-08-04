@@ -73,7 +73,7 @@ TE_index ={
 K_index = {
     "FieldGoalAttempts": 6,
     "FieldGoalsMade": 5,
-    "ExtraPointAttempt": 10,
+    "ExtraPointAttempts": 10,
     "ExtraPointMade": 9,
     "Week": 0,
     "FantasyPoints": 4,
