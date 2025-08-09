@@ -9,8 +9,6 @@ import os
 # python scoreScraper.py all_team_stats_{whenever}.csv
 
 
-# just going to have to write index maps per position.
-
 QB_index = {
     "Completions": 5,
     "AttemptsPassing": 6,

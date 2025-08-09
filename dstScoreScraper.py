@@ -24,6 +24,61 @@ teams = [
     "TEN", "WAS"
 ]
 
+DST_index = {
+    "Week": 2,
+    "PointsAgainst": 12,
+    "Sacks": 5,
+    "InterceptionDefense": 7,
+    "DefenseFumbleRecovery": 8,
+    "Safety": 9,
+    "TouchdownsDefense": 10,
+    "TouchdownsReturn": 11,
+    "FantasyPoints": 13
+}
+
+standard_headers = [
+    "Completions",
+    "AttemptsPassing",
+    "YardsPassing",
+    "TouchdownsPassing",
+    "Interceptions",
+    "Targets",
+    "Receptions",
+    "YardsReceiving",
+    "TouchdownsReceiving",
+    "AttemptsRushing",
+    "YardsRushing",
+    "TouchdownsRushing",
+    "Fumbles",
+    "FumblesLost",
+    "TwoExtraPoints",
+    "FieldGoalAttempts",
+    "FieldGoalsMade",
+    "ExtraPointAttempts",
+    "ExtraPointMade",
+    "PointsAgainst",
+    "Sacks",
+    "InterceptionDefense",
+    "DefenseFumbleRecovery",
+    "Safety",
+    "TouchdownsDefense",
+    "TouchdownsReturn",
+    "BlockedKicks",
+    "FantasyPoints",
+    "Week",
+    "PlayerID",
+    "Position",
+    "Team"
+]
+
+def map_row_to_standard(data, position_map):
+    row_dict = {header: None for header in standard_headers}
+    for key, index in position_map.items():
+        if index < len(data):
+            row_dict[key] = data[index]
+    return row_dict
+
+
 base_url = "https://fantasydata.com/nfl/fantasy-football-leaders"
 all_rows = []
 
@@ -42,6 +97,8 @@ def fetch_team_data(team, week_from, week_to):
     }
 
     response = requests.get(base_url, headers=headers, params=params)
+    response.raise_for_status()
+
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table")
 
@@ -49,7 +106,6 @@ def fetch_team_data(team, week_from, week_to):
         print(f"No table found for {team} Weeks {week_from}-{week_to}")
         return []
 
-    header_row = [th.text.strip() for th in table.find_all("th")]
     rows = []
 
     for tr in table.find_all("tr")[1:]:
@@ -57,35 +113,30 @@ def fetch_team_data(team, week_from, week_to):
         if not tds:
             continue
         row = [td.text.strip() for td in tds]
-        row.insert(0, team)
         rows.append(row)
 
-    return header_row, rows
+    return rows
 
 
 for team in teams:
     print(f"Fetching data for {team}...")
-    team_rows = []
-    all_headers = None
 
-    # weeks 1–10
-    headers_chunk, rows = fetch_team_data(team, 1, 10)
-    team_rows.extend(rows)
-    all_headers = headers_chunk if headers_chunk else all_headers
-    time.sleep(1)
+    for start_week, end_week in [(1, 10), (11, 18)]:
+        rows = fetch_team_data(team, start_week, end_week)
 
-    # weeks 11–18
-    headers_chunk2, rows2 = fetch_team_data(team, 11, 18)
-    team_rows.extend(rows2)
-    all_headers = headers_chunk2 if headers_chunk2 else all_headers
-    time.sleep(1)
+        for row in rows:
+            standard_row = map_row_to_standard(row, DST_index)
+            standard_row["Position"] = "DST"
+            standard_row["PlayerID"] = None  # DST has no playerId
+            standard_row["Team"] = team
+            all_rows.append(standard_row)
 
-    all_rows.extend(team_rows)
+        time.sleep(1)  # courtesy
 
 
-if all_rows and all_headers:
-    df = pd.DataFrame(all_rows, columns=["Team"] + all_headers)
+if all_rows:
+    df = pd.DataFrame(all_rows, columns=standard_headers)
     df.to_csv(f"dst_score_{year}.csv", index=False)
-    print(f"saved data to dst_score_{year}.csv")
+    print(f"Saved data to dst_score_{year}.csv")
 else:
-    print("no data found.")
+    print("No data found.")
