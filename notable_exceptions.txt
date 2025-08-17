@@ -1,0 +1,3 @@
+2007
+m. shipp is formatted as WR when he's a RB. Change to WR for upload, then revert in db.
+Andrew McDonald: for some reason listed as OT. Just skip this dude.
